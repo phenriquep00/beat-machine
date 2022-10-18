@@ -1,20 +1,15 @@
 import pygame
 from pygame import mixer
+
+from classes.colors import Colors
+
 pygame.init()
 
 
 WIDTH = 1400
 HEIGHT = 800
 
-black = (0, 0, 0)
-white = (255, 255, 255)
-gray = (128, 128, 128)
-green = (0, 255, 0)
-gold = (212, 175, 55)
-blue = (0, 255, 255)
-dark_gray = (50, 50, 50)
-light_gray = (170, 170, 170)
-
+COLORS = Colors()
 
 screen = pygame.display.set_mode([WIDTH, HEIGHT])
 pygame.display.set_caption("Drum Machine")
@@ -73,10 +68,10 @@ def play_notes():
 
 
 def draw_grid(clicks, beat, actives):
-    left_box = pygame.draw.rect(screen, gray, [0, 0, 200, HEIGHT - 200], 5)
-    bottom_box = pygame.draw.rect(screen, gray, [0, HEIGHT - 200, WIDTH, 200], 5)
+    left_box = pygame.draw.rect(screen, COLORS.gray, [0, 0, 200, HEIGHT - 200], 5)
+    bottom_box = pygame.draw.rect(screen, COLORS.gray, [0, HEIGHT - 200, WIDTH, 200], 5)
     boxes = []
-    colors = [gray, white, gray]
+    colors = [COLORS.gray, COLORS.white, COLORS.gray]
     hi_hat_text = label_font.render('High Hat', True, colors[actives[0]])
     screen.blit(hi_hat_text, (30, 30))
     snare_text = label_font.render('Snare', True, colors[actives[1]])
@@ -91,47 +86,47 @@ def draw_grid(clicks, beat, actives):
     screen.blit(hi_hat_text, (30, 530))
 
     for i in range(instruments):
-        pygame.draw.line(screen, gray, (0, (i * 100) + 100), (198, (i * 100) + 100), 3)
+        pygame.draw.line(screen, COLORS.gray, (0, (i * 100) + 100), (198, (i * 100) + 100), 3)
 
     for i in range(beats):
         for j in range(instruments):
             if clicks[j][i] == -1:
-                color = gray
+                color = COLORS.gray
             else:
                 if actives[j] == 1:
-                    color = green
+                    color = COLORS.green
                 else:
-                    color = dark_gray
+                    color = COLORS.dark_gray
             rect = pygame.draw.rect(screen, color,
                                     [i * ((WIDTH - 200) // beats) + 205, (j * 100) + 5, ((WIDTH - 200) // beats) - 10,
                                      90], 0, 3)
-            pygame.draw.rect(screen, gold,
+            pygame.draw.rect(screen, COLORS.gold,
                              [i * ((WIDTH - 200) / beats) + 200, (j * 100), ((WIDTH - 200) // beats),
                               ((HEIGHT - 200) // instruments)], 5, 5)
-            pygame.draw.rect(screen, black,
+            pygame.draw.rect(screen, COLORS.black,
                              [i * ((WIDTH - 200) / beats) + 200, (j * 100), ((WIDTH - 200) // beats),
                                             ((HEIGHT - 200) // instruments)], 2, 5)
             boxes.append((rect, (i, j)))
 
-        active = pygame.draw.rect(screen, blue, [beat * ((WIDTH - 200) / beats) + 200, 0, ((WIDTH - 200) // beats),
+        active = pygame.draw.rect(screen, COLORS.blue, [beat * ((WIDTH - 200) / beats) + 200, 0, ((WIDTH - 200) // beats),
                                   instruments * 100], 5, 3)
     return boxes
 
 
 def draw_save_menu(beat_name, typing):
-    pygame.draw.rect(screen, black, (0, 0, WIDTH, HEIGHT))
-    menu_text = label_font.render('SAVE MENU: Enter a name for the current beat', True, white)
-    saving_btn = pygame.draw.rect(screen, gray, [WIDTH // 2 - 200, HEIGHT * .75, 400, 100], 0, 5)
-    saving_text = label_font.render('Save Beat', True, white)
+    pygame.draw.rect(screen, COLORS.black, (0, 0, WIDTH, HEIGHT))
+    menu_text = label_font.render('SAVE MENU: Enter a name for the current beat', True, COLORS.white)
+    saving_btn = pygame.draw.rect(screen, COLORS.gray, [WIDTH // 2 - 200, HEIGHT * .75, 400, 100], 0, 5)
+    saving_text = label_font.render('Save Beat', True, COLORS.white)
     screen.blit(saving_text, (WIDTH // 2 - 70, HEIGHT * .75 + 30))
     screen.blit(menu_text, (400, 40))
-    exit_btn = pygame.draw.rect(screen, gray, [WIDTH - 200, HEIGHT - 100, 180, 90], 0, 5)
-    exit_text = label_font.render('Close', True, white)
+    exit_btn = pygame.draw.rect(screen, COLORS.gray, [WIDTH - 200, HEIGHT - 100, 180, 90], 0, 5)
+    exit_text = label_font.render('Close', True, COLORS.white)
     screen.blit(exit_text, (WIDTH - 180, HEIGHT - 70))
     if typing:
-        pygame.draw.rect(screen, dark_gray, [400, 200, 600, 200], 0, 5)
-    entry_rect = pygame.draw.rect(screen, gray, [400, 200, 600, 200], 5, 5)
-    entry_text = label_font.render(f'{beat_name}', True, white)
+        pygame.draw.rect(screen, COLORS.dark_gray, [400, 200, 600, 200], 0, 5)
+    entry_rect = pygame.draw.rect(screen, COLORS.gray, [400, 200, 600, 200], 5, 5)
+    entry_text = label_font.render(f'{beat_name}', True, COLORS.white)
     screen.blit(entry_text, (430, 250))
 
     return exit_btn, saving_btn, entry_rect
@@ -141,29 +136,29 @@ def draw_load_menu(index):
     loaded_clicked = []
     loaded_beats = 0
     loaded_bpm = 0
-    pygame.draw.rect(screen, black, (0, 0, WIDTH, HEIGHT))
-    menu_text = label_font.render('LOAD MENU: Select a beat to load', True, white)
-    loading_btn = pygame.draw.rect(screen, gray, [WIDTH // 2 - 200, HEIGHT * .87, 400, 100], 0, 5)
-    loading_text = label_font.render('Load Beat', True, white)
+    pygame.draw.rect(screen, COLORS.black, (0, 0, WIDTH, HEIGHT))
+    menu_text = label_font.render('LOAD MENU: Select a beat to load', True, COLORS.white)
+    loading_btn = pygame.draw.rect(screen, COLORS.gray, [WIDTH // 2 - 200, HEIGHT * .87, 400, 100], 0, 5)
+    loading_text = label_font.render('Load Beat', True, COLORS.white)
     screen.blit(loading_text, (WIDTH // 2 - 70, HEIGHT * .87 + 30))
     screen.blit(menu_text, (400, 40))
-    delete_btn = pygame.draw.rect(screen, gray, [WIDTH//2 - 500, HEIGHT * .87, 200, 100], 0, 5)
-    delete_text = label_font.render('Delete beat', True, white)
+    delete_btn = pygame.draw.rect(screen, COLORS.gray, [WIDTH//2 - 500, HEIGHT * .87, 200, 100], 0, 5)
+    delete_text = label_font.render('Delete beat', True, COLORS.white)
     screen.blit(delete_text, (WIDTH//2 - 485, HEIGHT * .87 + 30))
-    exit_btn = pygame.draw.rect(screen, gray, [WIDTH - 200, HEIGHT - 100, 180, 90], 0, 5)
-    exit_text = label_font.render('Close', True, white)
+    exit_btn = pygame.draw.rect(screen, COLORS.gray, [WIDTH - 200, HEIGHT - 100, 180, 90], 0, 5)
+    exit_text = label_font.render('Close', True, COLORS.white)
     screen.blit(exit_text, (WIDTH - 180, HEIGHT - 70))
-    loaded_rectangle = pygame.draw.rect(screen, gray, [190, 90, 1000, 600], 5, 5)
+    loaded_rectangle = pygame.draw.rect(screen, COLORS.gray, [190, 90, 1000, 600], 5, 5)
     if 0 <= index < len(saved_beats):
-        pygame.draw.rect(screen, light_gray, [190, 100 + index*50, 1000, 50])
+        pygame.draw.rect(screen, COLORS.light_gray, [190, 100 + index*50, 1000, 50])
     for beat in range(len(saved_beats)):
         if beat < 10:
             beat_clicked = []
-            row_text = medium_font.render(f'{beat + 1}', True, white)
+            row_text = medium_font.render(f'{beat + 1}', True, COLORS.white)
             screen.blit(row_text, (200, 100 + beat * 50))
             name_index_start = saved_beats[beat].index('name: ') + 6
             name_index_end = saved_beats[beat].index(', beats:')
-            name_text = medium_font.render(saved_beats[beat][name_index_start: name_index_end], True, white)
+            name_text = medium_font.render(saved_beats[beat][name_index_start: name_index_end], True, COLORS.white)
             screen.blit(name_text, (240, 100 + beat * 50))
         if 0 <= index < len(saved_beats) and beat == index:
             beat_index_end = saved_beats[beat].index(', bpm:')
@@ -187,47 +182,47 @@ run = True
 
 while run:
     timer.tick(fps)
-    screen.fill(black)
+    screen.fill(COLORS.black)
 
     boxes = draw_grid(clicked, active_beat, active_list)
     # lower buttons
-    play_pause = pygame.draw.rect(screen, gray, [50, HEIGHT - 150, 200, 100], 0, 5)
-    play_text = label_font.render('Play/Pause', True, white)
+    play_pause = pygame.draw.rect(screen, COLORS.gray, [50, HEIGHT - 150, 200, 100], 0, 5)
+    play_text = label_font.render('Play/Pause', True, COLORS.white)
     screen.blit(play_text, (70, HEIGHT - 130))
 
     if playing:
-        play_text2 = medium_font.render('Playing', True, dark_gray)
+        play_text2 = medium_font.render('Playing', True, COLORS.dark_gray)
     else:
-        play_text2 = medium_font.render('Paused', True, dark_gray)
+        play_text2 = medium_font.render('Paused', True, COLORS.dark_gray)
     screen.blit(play_text2, (70, HEIGHT - 100))
 
     # bpm
-    bpm_rect = pygame.draw.rect(screen, gray, [300, HEIGHT - 150, 220, 100], 5, 5)
-    bpm_text = medium_font.render('Beats per Minute', True, white)
+    bpm_rect = pygame.draw.rect(screen, COLORS.gray, [300, HEIGHT - 150, 220, 100], 5, 5)
+    bpm_text = medium_font.render('Beats per Minute', True, COLORS.white)
     screen.blit(bpm_text, (308, HEIGHT - 130))
 
-    bpm_text2 = label_font.render(f'{bpm}', True, white)
+    bpm_text2 = label_font.render(f'{bpm}', True, COLORS.white)
     screen.blit(bpm_text2, (370, HEIGHT - 100))
 
-    bpm_add_rect = pygame.draw.rect(screen, gray, [530, HEIGHT - 150, 48, 48], 0, 5)
-    bpm_sup_rect = pygame.draw.rect(screen, gray, [530, HEIGHT - 100, 48, 48], 0, 5)
-    add_text = medium_font.render('+5', True, white)
-    sub_text = medium_font.render('-5', True, white)
+    bpm_add_rect = pygame.draw.rect(screen, COLORS.gray, [530, HEIGHT - 150, 48, 48], 0, 5)
+    bpm_sup_rect = pygame.draw.rect(screen, COLORS.gray, [530, HEIGHT - 100, 48, 48], 0, 5)
+    add_text = medium_font.render('+5', True, COLORS.white)
+    sub_text = medium_font.render('-5', True, COLORS.white)
     screen.blit(add_text, (540, HEIGHT - 140))
     screen.blit(sub_text, (540, HEIGHT - 90))
 
     # beats
-    beats_rect = pygame.draw.rect(screen, gray, [600, HEIGHT - 150, 220, 100], 5, 5)
-    beats_text = medium_font.render('Beats in Loop', True, white)
+    beats_rect = pygame.draw.rect(screen, COLORS.gray, [600, HEIGHT - 150, 220, 100], 5, 5)
+    beats_text = medium_font.render('Beats in Loop', True, COLORS.white)
     screen.blit(beats_text, (628, HEIGHT - 130))
 
-    beats_text2 = label_font.render(f'{beats}', True, white)
+    beats_text2 = label_font.render(f'{beats}', True, COLORS.white)
     screen.blit(beats_text2, (700, HEIGHT - 100))
 
-    beats_add_rect = pygame.draw.rect(screen, gray, [830, HEIGHT - 150, 48, 48], 0, 5)
-    beats_sup_rect = pygame.draw.rect(screen, gray, [830, HEIGHT - 100, 48, 48], 0, 5)
-    add_text2 = medium_font.render('+1', True, white)
-    sub_text2 = medium_font.render('-1', True, white)
+    beats_add_rect = pygame.draw.rect(screen, COLORS.gray, [830, HEIGHT - 150, 48, 48], 0, 5)
+    beats_sup_rect = pygame.draw.rect(screen, COLORS.gray, [830, HEIGHT - 100, 48, 48], 0, 5)
+    add_text2 = medium_font.render('+1', True, COLORS.white)
+    sub_text2 = medium_font.render('-1', True, COLORS.white)
     screen.blit(add_text2, (840, HEIGHT - 140))
     screen.blit(sub_text2, (840, HEIGHT - 90))
 
@@ -238,16 +233,16 @@ while run:
         instrument_rects.append(rect)
 
     # save/load
-    save_button = pygame.draw.rect(screen, gray, [900, HEIGHT - 150, 200, 48], 0, 5)
-    save_text = label_font.render('Save Beat', True, white)
+    save_button = pygame.draw.rect(screen, COLORS.gray, [900, HEIGHT - 150, 200, 48], 0, 5)
+    save_text = label_font.render('Save Beat', True, COLORS.white)
     screen.blit(save_text, (920, HEIGHT - 140))
-    load_button = pygame.draw.rect(screen, gray, [900, HEIGHT - 100, 200, 48], 0, 5)
-    load_text = label_font.render('Load Beat', True, white)
+    load_button = pygame.draw.rect(screen, COLORS.gray, [900, HEIGHT - 100, 200, 48], 0, 5)
+    load_text = label_font.render('Load Beat', True, COLORS.white)
     screen.blit(load_text, (920, HEIGHT - 90))
 
     # clear board
-    clear_button = pygame.draw.rect(screen, gray, [1150, HEIGHT - 150, 200, 100], 0, 5)
-    clear_text = label_font.render('Clear', True, white)
+    clear_button = pygame.draw.rect(screen, COLORS.gray, [1150, HEIGHT - 150, 200, 100], 0, 5)
+    clear_text = label_font.render('Clear', True, COLORS.white)
     screen.blit(clear_text, (1200, HEIGHT - 110))
 
     if save_menu:
