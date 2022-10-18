@@ -59,3 +59,6 @@ class Grid:
 
             active = pygame.draw.rect(self.surf, self.COLORS.blue, [self.beat * ((WIDTH - 200) / self.beats) + 200, 0, ((WIDTH - 200) // self.beats),
                                                      len(self.instruments) * 100], 5, 3)
+
+    def return_boxes(self):
+        return self.boxes

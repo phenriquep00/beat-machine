@@ -27,7 +27,7 @@ active_list = [1 for _ in range(instruments)]
 bpm = 240
 playing = True
 active_length = 0
-active_beat = 1
+active_beat = 0
 beat_changed = True
 
 # load sounds
@@ -177,17 +177,35 @@ def draw_load_menu(index):
 
 
 run = True
-grid = Grid(screen, clicked, active_beat, active_list)
+
 
 while run:
     timer.tick(fps)
     screen.fill(COLORS.black)
-
+    grid = Grid(screen, clicked, active_beat, active_list)
     grid.draw()
+    boxes = grid.return_boxes()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
 
+    if beat_changed:
+        play_notes()
+        beat_changed = False
+
+    beat_length = 3600 // bpm
+
+    if playing:
+        if active_length < beat_length:
+            active_length += 1
+        else:
+            active_length = 0
+            if active_beat < beats - 1:
+                active_beat += 1
+                beat_changed = True
+            else:
+                active_beat = 0
+                beat_changed = True
     pygame.display.flip()
 pygame.quit()
