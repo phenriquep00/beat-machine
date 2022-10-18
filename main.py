@@ -2,6 +2,7 @@ import pygame
 from pygame import mixer
 from classes.colors import Colors
 from classes.fonts import Fonts
+from classes.grid import Grid
 from utils.constants import *
 
 pygame.init()
@@ -176,174 +177,17 @@ def draw_load_menu(index):
 
 
 run = True
+grid = Grid(screen, clicked, active_beat, active_list)
 
 while run:
     timer.tick(fps)
     screen.fill(COLORS.black)
 
-    boxes = draw_grid(clicked, active_beat, active_list)
-    # lower buttons
-    play_pause = pygame.draw.rect(screen, COLORS.gray, [50, HEIGHT - 150, 200, 100], 0, 5)
-    play_text = label_font.render('Play/Pause', True, COLORS.white)
-    screen.blit(play_text, (70, HEIGHT - 130))
-
-    if playing:
-        play_text2 = medium_font.render('Playing', True, COLORS.dark_gray)
-    else:
-        play_text2 = medium_font.render('Paused', True, COLORS.dark_gray)
-    screen.blit(play_text2, (70, HEIGHT - 100))
-
-    # bpm
-    bpm_rect = pygame.draw.rect(screen, COLORS.gray, [300, HEIGHT - 150, 220, 100], 5, 5)
-    bpm_text = medium_font.render('Beats per Minute', True, COLORS.white)
-    screen.blit(bpm_text, (308, HEIGHT - 130))
-
-    bpm_text2 = label_font.render(f'{bpm}', True, COLORS.white)
-    screen.blit(bpm_text2, (370, HEIGHT - 100))
-
-    bpm_add_rect = pygame.draw.rect(screen, COLORS.gray, [530, HEIGHT - 150, 48, 48], 0, 5)
-    bpm_sup_rect = pygame.draw.rect(screen, COLORS.gray, [530, HEIGHT - 100, 48, 48], 0, 5)
-    add_text = medium_font.render('+5', True, COLORS.white)
-    sub_text = medium_font.render('-5', True, COLORS.white)
-    screen.blit(add_text, (540, HEIGHT - 140))
-    screen.blit(sub_text, (540, HEIGHT - 90))
-
-    # beats
-    beats_rect = pygame.draw.rect(screen, COLORS.gray, [600, HEIGHT - 150, 220, 100], 5, 5)
-    beats_text = medium_font.render('Beats in Loop', True, COLORS.white)
-    screen.blit(beats_text, (628, HEIGHT - 130))
-
-    beats_text2 = label_font.render(f'{beats}', True, COLORS.white)
-    screen.blit(beats_text2, (700, HEIGHT - 100))
-
-    beats_add_rect = pygame.draw.rect(screen, COLORS.gray, [830, HEIGHT - 150, 48, 48], 0, 5)
-    beats_sup_rect = pygame.draw.rect(screen, COLORS.gray, [830, HEIGHT - 100, 48, 48], 0, 5)
-    add_text2 = medium_font.render('+1', True, COLORS.white)
-    sub_text2 = medium_font.render('-1', True, COLORS.white)
-    screen.blit(add_text2, (840, HEIGHT - 140))
-    screen.blit(sub_text2, (840, HEIGHT - 90))
-
-    # instruments
-    instrument_rects = []
-    for i in range(instruments):
-        rect = pygame.rect.Rect((0, i * 100), (200, 100))
-        instrument_rects.append(rect)
-
-    # save/load
-    save_button = pygame.draw.rect(screen, COLORS.gray, [900, HEIGHT - 150, 200, 48], 0, 5)
-    save_text = label_font.render('Save Beat', True, COLORS.white)
-    screen.blit(save_text, (920, HEIGHT - 140))
-    load_button = pygame.draw.rect(screen, COLORS.gray, [900, HEIGHT - 100, 200, 48], 0, 5)
-    load_text = label_font.render('Load Beat', True, COLORS.white)
-    screen.blit(load_text, (920, HEIGHT - 90))
-
-    # clear board
-    clear_button = pygame.draw.rect(screen, COLORS.gray, [1150, HEIGHT - 150, 200, 100], 0, 5)
-    clear_text = label_font.render('Clear', True, COLORS.white)
-    screen.blit(clear_text, (1200, HEIGHT - 110))
-
-    if save_menu:
-        exit_button, saving_button, entry_rectangle = draw_save_menu(beat_name, typing)
-    if load_menu:
-        exit_button, loading_button, delete_button, loaded_rect, loaded_info = draw_load_menu(index)
-
-    if beat_changed:
-        play_notes()
-        beat_changed = False
+    grid.draw()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        if event.type == pygame.MOUSEBUTTONDOWN and not save_menu and not load_menu:
-            for i in range(len(boxes)):
-                if boxes[i][0].collidepoint(event.pos):
-                    coords = boxes[i][1]
-                    clicked[coords[1]][coords[0]] *= -1
-        if event.type == pygame.MOUSEBUTTONUP and not save_menu and not load_menu:
-            if play_pause.collidepoint(event.pos):
-                if playing:
-                    playing = False
-                elif not playing:
-                    playing = True
-            if bpm_add_rect.collidepoint(event.pos):
-                bpm += 5
-            elif bpm_sup_rect.collidepoint(event.pos):
-                bpm -= 5
-            elif beats_add_rect.collidepoint(event.pos):
-                beats += 1
-                for i in range(len(clicked)):
-                    clicked[i].append(-1)
-            elif beats_sup_rect.collidepoint(event.pos):
-                beats -= 1
-                for i in range(len(clicked)):
-                    clicked[i].pop(-1)
-            elif clear_button.collidepoint(event.pos):
-                clicked = [[-1 for _ in range(beats)] for _ in range(instruments)]
-            elif save_button.collidepoint(event.pos):
-                save_menu = True
-                playing = False
-            elif load_button.collidepoint(event.pos):
-                load_menu = True
-                playing = False
-            for i in range(len(instrument_rects)):
-                if instrument_rects[i].collidepoint(event.pos):
-                    active_list[i] *= -1
 
-        elif event.type == pygame.MOUSEBUTTONUP:
-            if exit_button.collidepoint(event.pos):
-                save_menu = False
-                load_menu = False
-                playing = True
-                beat_name = ''
-                typing = False
-            if load_menu:
-                if loaded_rect.collidepoint(event.pos):
-                    index = (event.pos[1] - 100) // 50
-                if delete_button.collidepoint(event.pos):
-                    if 0 <= index < len(saved_beats):
-                        saved_beats.pop(index)
-                if loading_button.collidepoint(event.pos):
-                    if 0 <= index < len(saved_beats):
-                        beats = loaded_info[0]
-                        bpm = loaded_info[1]
-                        clicked = loaded_info[2]
-                        index = 100
-                        load_menu = False
-            if save_menu:
-                if entry_rectangle.collidepoint(event.pos):
-                    if typing:
-                        typing = False
-                    elif not typing:
-                        typing = True
-                if saving_button.collidepoint(event.pos):
-                    file = open('saved_beats.txt', 'w')
-                    saved_beats.append(f'name: {beat_name}, beats: {beats}, bpm: {bpm}, selected: {clicked}')
-                    for i in range(len(saved_beats)):
-                        file.write(str(saved_beats[i]))
-                    file.close()
-                    save_menu = False
-                    typing = False
-                    beat_name = ''
-                    playing = True
-
-        if event.type == pygame.TEXTINPUT and typing:
-            beat_name += event.text
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_BACKSPACE and len(beat_name) > 0 and typing:
-                beat_name = beat_name[:-1]
-
-    beat_length = 3600 // bpm
-
-    if playing:
-        if active_length < beat_length:
-            active_length += 1
-        else:
-            active_length = 0
-            if active_beat < beats - 1:
-                active_beat += 1
-                beat_changed = True
-            else:
-                active_beat = 0
-                beat_changed = True
     pygame.display.flip()
 pygame.quit()
