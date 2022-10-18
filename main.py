@@ -1,20 +1,17 @@
 import pygame
 from pygame import mixer
-
 from classes.colors import Colors
+from classes.fonts import Fonts
+from utils.constants import *
 
 pygame.init()
-
-
-WIDTH = 1400
-HEIGHT = 800
-
 COLORS = Colors()
+FONTS = Fonts()
 
 screen = pygame.display.set_mode([WIDTH, HEIGHT])
 pygame.display.set_caption("Drum Machine")
-label_font = pygame.font.Font('freesansbold.ttf', 30)
-medium_font = pygame.font.Font('freesansbold.ttf', 24)
+label_font = FONTS.label_font
+medium_font = FONTS.medium_font
 
 index = 100
 fps = 60
@@ -51,19 +48,19 @@ typing = False
 
 
 def play_notes():
-    for i in range(len(clicked)):
-        if clicked[i][active_beat] == 1 and active_list[i] == 1:
-            if i == 0:
+    for _ in range(len(clicked)):
+        if clicked[_][active_beat] == 1 and active_list[_] == 1:
+            if _ == 0:
                 hi_hat.play()
-            if i == 1:
+            if _ == 1:
                 snare.play()
-            if i == 2:
+            if _ == 2:
                 kick.play()
-            if i == 3:
+            if _ == 3:
                 crash.play()
-            if i == 4:
+            if _ == 4:
                 clap.play()
-            if i == 5:
+            if _ == 5:
                 tom.play()
 
 
