@@ -5,7 +5,7 @@ from utils.constants import *
 
 
 class Grid:
-    def __init__(self, surf, clicks, beat, actives):
+    def __init__(self, surf, clicks, beat, actives, boxes):
         self.surf = surf
         self.clicks = clicks
         self.beat = beat
@@ -14,7 +14,7 @@ class Grid:
         self.COLORS = Colors()
         self.FONTS = Fonts()
 
-        self.boxes = []
+        self.boxes = boxes
         self.colors = [self.COLORS.gray, self.COLORS.white, self.COLORS.gray]
 
         self.hi_hat_text = self.FONTS.label_font.render('High Hat', True, self.colors[actives[0]])
@@ -28,6 +28,13 @@ class Grid:
             self.hi_hat_text, self.snare_text, self.kick_text, self.crash_text, self.clap_text, self.high_tom_text
         ]
         self.beats = 8
+
+        self.instrument_rects = []
+        for i in range(len(self.instruments)):
+            rect = pygame.rect.Rect((0, i * 100), (200, 100))
+            self.instrument_rects.append(rect)
+
+        self.active_list = [1 for _ in range(len(self.instruments))]
 
     def draw(self):
         for _ in self.instruments:
@@ -62,3 +69,10 @@ class Grid:
 
     def return_boxes(self):
         return self.boxes
+
+    def event_handle(self):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONUP:
+                for i in range(len(self.instrument_rects)):
+                    if self.instrument_rects[i].collidepoint(event.pos):
+                        self.active_list[i] *= -1

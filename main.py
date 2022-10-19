@@ -66,17 +66,19 @@ def play_notes():
 
 
 run = True
+boxes = []
 
 while run:
     timer.tick(fps)
     screen.fill(COLORS.black)
-    grid = Grid(screen, clicked, active_beat, active_list)
+    grid = Grid(screen, clicked, active_beat, active_list, boxes)
     grid.draw()
     boxes = grid.return_boxes()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+    grid.event_handle()
 
     if beat_changed:
         play_notes()
